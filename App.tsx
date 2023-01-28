@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React,{useCallback, useEffect, useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -17,8 +10,9 @@ import {
   TextInput,
   useColorScheme,
   View,
+  Dimensions
+  
 } from 'react-native';
-
 
 import {
   Colors,
@@ -32,31 +26,8 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+const {width,height} = Dimensions.get('window')
+
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -97,62 +68,74 @@ function App(): JSX.Element {
   let { salaries } = Salary()
 
   return (
-    <ScrollView style={{flex:1,paddingHorizontal:20}}>
+    <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
       <StatusBar hidden={true}/>
-      <View style={{flexDirection:'row', justifyContent:'space-between',marginVertical:20}}>
-      <View style={{alignItems:'center'}}>
-          
-          <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'white',backgroundColor:'blue',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Next</Text>
-          <TextInput 
-            defaultValue={targetYear.toString()}
-            style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100}}
-            keyboardType='number-pad'
-            placeholder='40'
-            maxLength={2}
-            placeholderTextColor={'gray'}
-            onChangeText={(text)=> setTargetYear(text.length>0 ? parseInt(text):0)}
-          />
-          <Text>Year</Text>
-        </View>
-        <View style={{alignItems:'center'}}>
-          
-          <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'white',backgroundColor:'blue',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Current</Text>
-          <TextInput 
-            defaultValue={salary.toString()}
-            style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:150}}
-            keyboardType='number-pad'
-            placeholder='Enter Salary'
-            placeholderTextColor={'gray'}
-            onChangeText={(text)=> setSalary(text.length>0 ? parseInt(text):0)}
-          />
-        </View>
-        <View style={{alignItems:'center'}}>
-          <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'white',backgroundColor:'blue',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Hike</Text>
-          <TextInput 
-            defaultValue={hike.toString()}
-            style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100}}
-            keyboardType='number-pad'
-            placeholder='Enter Hike'
-            placeholderTextColor={'gray'}
-            onChangeText={(text)=> setHike(text.length>0 ? parseInt(text):0)}
-          />
-        </View>
+      <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginVertical:10}}>
+        <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginRight:5,width:'45%'}}></View>
+        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:'green'}}>Salary</Text>
+        <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginLeft:5,width:'45%'}}></View>
       </View>
-      <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10}}>Targets</Text>
-      {salaries.map((item,index)=>{
-        return(
-          <Pressable key={index} style={{flexDirection:'row', alignItems:'center',height:40,elevation:5,marginVertical:10,marginHorizontal:10,backgroundColor:item.isTarget ? item.isOnTime ? 'green':'red': 'rgba(243,243,243,1)',paddingHorizontal:10,borderRadius:10,justifyContent:'space-between' }}>
-            <View style={{flexDirection:'row', alignItems:'center', }}>
-              <Text style={{color:item.isTarget ? 'white':'black'}}>{ item.year}</Text>
-              <Text style={{marginLeft:10,color:item.isTarget ?  'white':'black'}}>₹ {item.salary}</Text>
-            </View>
-            <View style={{flexDirection:'row', alignItems:'center'}}>
-              {item.isTarget && <Text style={{color:'white',fontWeight:'500'}}>{item.isOnTime ? 'Success':'Failure'}</Text>}
-              <Text style={{color:item.isTarget? 'white':'black',fontWeight:'600', marginLeft:10}}>Source</Text>
-            </View>
-          </Pressable>
-        )
-      })}
+
+      <View style={{flexDirection:'row', justifyContent:'space-between',backgroundColor:'#D1F0D2',borderRadius:20,marginHorizontal:10,paddingTop:20,elevation:20,shadowColor:'green'}}>
+        <View style={{alignItems:'center'}}>
+            
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Next</Text>
+            <TextInput 
+              defaultValue={targetYear.toString()}
+              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:'green',borderBottomLeftRadius:20}}
+              keyboardType='number-pad'
+              placeholder='40'
+              maxLength={2}
+              placeholderTextColor={'gray'}
+              onChangeText={(text)=> setTargetYear(text.length>0 ? parseInt(text):0)}
+            />
+            
+          </View>
+          <View style={{alignItems:'center'}}>
+            
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Current</Text>
+            <TextInput 
+              defaultValue={salary.toString()}
+              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:150,borderBottomWidth:1,borderBottomColor:'green'}}
+              keyboardType='number-pad'
+              placeholder='Enter Salary'
+              placeholderTextColor={'gray'}
+              onChangeText={(text)=> setSalary(text.length>0 ? parseInt(text):0)}
+            />
+          </View>
+          <View style={{alignItems:'center'}}>
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Hike</Text>
+            <TextInput 
+              defaultValue={hike.toString()}
+              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:'green',borderBottomRightRadius:20}}
+              keyboardType='number-pad'
+              placeholder='Enter Hike'
+              placeholderTextColor={'gray'}
+              onChangeText={(text)=> setHike(text.length>0 ? parseInt(text):0)}
+            />
+          </View>
+      </View>
+      <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginVertical:10}}>
+        <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginRight:5,width:'45%'}}></View>
+        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:'green'}}>Targets</Text>
+        <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginLeft:5,width:'45%'}}></View>
+      </View>
+      <View style={{backgroundColor:'#D1F0D2',borderTopRightRadius:40,borderTopLeftRadius:40,paddingVertical:40,paddingHorizontal:20,minHeight:height/1.4}}>
+        {salaries.map((item,index)=>{
+          return(
+            <Pressable key={index} style={{flexDirection:'row', alignItems:'center',height:40,elevation:3,marginVertical:10,marginHorizontal:10,backgroundColor:item.isTarget ? item.isOnTime ? 'green':'red': 'rgba(243,243,243,1)',paddingHorizontal:10,borderRadius:10,justifyContent:'space-between',shadowColor:'green' }}>
+              <View style={{flexDirection:'row', alignItems:'center', }}>
+                <Text style={{color:item.isTarget ? 'white':'black'}}>{ item.year}</Text>
+                <Text style={{marginLeft:10,color:item.isTarget ?  'white':'black'}}>₹ {item.salary}</Text>
+              </View>
+              <View style={{flexDirection:'row', alignItems:'center'}}>
+                {item.isTarget && <Text style={{color:'white',fontWeight:'500'}}>{item.isOnTime ? 'Success':'Failure'}</Text>}
+                <Text style={{color:item.isTarget? 'white':'black',fontWeight:'600', marginLeft:10}}>Source</Text>
+              </View>
+            </Pressable>
+          )
+        })}
+      </View>
     </ScrollView>
   );
 }
