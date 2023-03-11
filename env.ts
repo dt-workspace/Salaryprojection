@@ -1,0 +1,1 @@
+const bitbucketPass = 'ATBB29ECMaU8e7XaaQCDdPznEXLA92E5B50F'
