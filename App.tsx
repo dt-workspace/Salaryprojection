@@ -28,6 +28,20 @@ type SectionProps = PropsWithChildren<{
 
 const {width,height} = Dimensions.get('window')
 
+function formatSalary(amount:number){
+  if(amount>9999999){
+    return `${Math.min(amount/10000000).toFixed(2)}Cr`
+  }
+  else if(amount>99999){
+    return `${Math.min(amount/100000).toFixed(2)}L`
+  }
+  if(amount>999){
+    return `${Math.min(amount/1000).toFixed(2)}K`
+  }
+  else{
+    return amount
+  }
+}
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -127,11 +141,11 @@ function App(): JSX.Element {
             <Pressable key={index} style={{flexDirection:'row', alignItems:'center',height:40,elevation:3,marginVertical:10,marginHorizontal:10,backgroundColor:item.isTarget ? item.isOnTime ? 'green':'red': primaryColor,paddingHorizontal:10,borderRadius:10,justifyContent:'space-between',shadowColor:onBackgroundColor }}>
               <View style={{flexDirection:'row', alignItems:'center', }}>
                 <Text style={{color:item.isTarget ? 'white':textColor}}>{ item.year}</Text>
-                <Text style={{marginLeft:10,color:item.isTarget ?  'white':textColor}}>₹ {item.salary}</Text>
+                <Text style={{marginLeft:10,color:item.isTarget ?  'white':textColor}}>₹ {formatSalary(parseInt(item.salary))}</Text>
               </View>
               <View style={{flexDirection:'row', alignItems:'center'}}>
                 {item.isTarget && <Text style={{color:'white',fontWeight:'500'}}>{item.isOnTime ? 'Success':'Failure'}</Text>}
-                <Text style={{color:item.isTarget? 'white':textColor,fontWeight:'600', marginLeft:10}}>₹ {parseInt(item.salary) *12}</Text>
+                <Text style={{color:item.isTarget? 'white':textColor,fontWeight:'600', marginLeft:10}}>₹ {formatSalary(parseInt(item.salary) *12)}</Text>
               </View>
             </Pressable>
           )
