@@ -11,6 +11,7 @@
     "clean:watchman": "watchman watch-del-all",
     "build:debug:android": "yarn react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && ./gradlew assembleDebug",
     "build:release:android": "cd android && ./gradlew assembleRelease",
+    "build:aab:android":"npx react-native build-android --mode=release",
     "clean:cache:android": "cd android && ./gradlew cleanBuildCache && cd .."
   },
   "dependencies": {
