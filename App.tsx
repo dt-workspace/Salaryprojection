@@ -31,10 +31,11 @@ const {width,height} = Dimensions.get('window')
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const primaryColor = isDarkMode ? '#023047': '#D1F0D2'
+  const onPrimaryColor =  isDarkMode ? 'white':'green'
+  const backgroundColor = isDarkMode ? 'rgba(2, 48, 71, .5)':'rgba(243,243,243,1)'
+  const onBackgroundColor = isDarkMode ? 'white':'green'
+  const textColor = isDarkMode ? 'white':'black'
 
   const [salary,setSalary] = useState<number>(22000)
   const [hike,setHike] = useState<number>(36)
@@ -68,21 +69,21 @@ function App(): JSX.Element {
   let { salaries } = Salary()
 
   return (
-    <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{flex:1,backgroundColor:backgroundColor}} showsVerticalScrollIndicator={false}>
       <StatusBar hidden={true}/>
       <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginVertical:10}}>
         <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginRight:5,width:'45%'}}></View>
-        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:'green'}}>Salary</Text>
+        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:onBackgroundColor}}>Salary</Text>
         <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginLeft:5,width:'45%'}}></View>
       </View>
 
-      <View style={{flexDirection:'row', justifyContent:'space-between',backgroundColor:'#D1F0D2',borderRadius:20,marginHorizontal:10,paddingTop:20,elevation:20,shadowColor:'green'}}>
+      <View style={{flexDirection:'row', justifyContent:'space-between',backgroundColor:primaryColor,borderRadius:20,marginHorizontal:10,paddingTop:20,elevation:20,shadowColor:'green'}}>
         <View style={{alignItems:'center'}}>
             
-            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Next</Text>
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:onPrimaryColor,borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Next</Text>
             <TextInput 
               defaultValue={targetYear.toString()}
-              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:'green',borderBottomLeftRadius:20}}
+              style={{textAlign:'center',marginTop:10,color:onPrimaryColor,fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:onPrimaryColor,borderBottomLeftRadius:20}}
               keyboardType='number-pad'
               placeholder='40'
               maxLength={2}
@@ -93,10 +94,10 @@ function App(): JSX.Element {
           </View>
           <View style={{alignItems:'center'}}>
             
-            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Current</Text>
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:onPrimaryColor,borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Current</Text>
             <TextInput 
               defaultValue={salary.toString()}
-              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:150,borderBottomWidth:1,borderBottomColor:'green'}}
+              style={{textAlign:'center',marginTop:10,color:onPrimaryColor,fontWeight:'600',width:150,borderBottomWidth:1,borderBottomColor:onPrimaryColor}}
               keyboardType='number-pad'
               placeholder='Enter Salary'
               placeholderTextColor={'gray'}
@@ -104,10 +105,10 @@ function App(): JSX.Element {
             />
           </View>
           <View style={{alignItems:'center'}}>
-            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:'green',borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Hike</Text>
+            <Text style={{textAlign:'center',fontSize:18,fontWeight:'600',color:onPrimaryColor,borderRadius:10,paddingHorizontal:20,paddingVertical:5}}>Hike</Text>
             <TextInput 
               defaultValue={hike.toString()}
-              style={{textAlign:'center',marginTop:10,color:'black',fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:'green',borderBottomRightRadius:20}}
+              style={{textAlign:'center',marginTop:10,color:onPrimaryColor,fontWeight:'600',width:100,borderBottomWidth:1,borderBottomColor:onPrimaryColor,borderBottomRightRadius:20}}
               keyboardType='number-pad'
               placeholder='Enter Hike'
               placeholderTextColor={'gray'}
@@ -117,20 +118,20 @@ function App(): JSX.Element {
       </View>
       <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginVertical:10}}>
         <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginRight:5,width:'45%'}}></View>
-        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:'green'}}>Targets</Text>
+        <Text style={{textAlign:'center',fontSize:18,fontWeight:'600', marginVertical:10,color:onBackgroundColor}}>Targets</Text>
         <View style={{borderWidth:1,borderColor:'rgba(51,51,51,.5)',marginLeft:5,width:'45%'}}></View>
       </View>
-      <View style={{backgroundColor:'#D1F0D2',borderTopRightRadius:40,borderTopLeftRadius:40,paddingVertical:40,paddingHorizontal:20,minHeight:height/1.4}}>
+      <View style={{backgroundColor:primaryColor,borderTopRightRadius:40,borderTopLeftRadius:40,paddingVertical:40,paddingHorizontal:20,minHeight:height/1.4}}>
         {salaries.map((item,index)=>{
           return(
-            <Pressable key={index} style={{flexDirection:'row', alignItems:'center',height:40,elevation:3,marginVertical:10,marginHorizontal:10,backgroundColor:item.isTarget ? item.isOnTime ? 'green':'red': 'rgba(243,243,243,1)',paddingHorizontal:10,borderRadius:10,justifyContent:'space-between',shadowColor:'green' }}>
+            <Pressable key={index} style={{flexDirection:'row', alignItems:'center',height:40,elevation:3,marginVertical:10,marginHorizontal:10,backgroundColor:item.isTarget ? item.isOnTime ? 'green':'red': primaryColor,paddingHorizontal:10,borderRadius:10,justifyContent:'space-between',shadowColor:onBackgroundColor }}>
               <View style={{flexDirection:'row', alignItems:'center', }}>
-                <Text style={{color:item.isTarget ? 'white':'black'}}>{ item.year}</Text>
-                <Text style={{marginLeft:10,color:item.isTarget ?  'white':'black'}}>₹ {item.salary}</Text>
+                <Text style={{color:item.isTarget ? 'white':textColor}}>{ item.year}</Text>
+                <Text style={{marginLeft:10,color:item.isTarget ?  'white':textColor}}>₹ {item.salary}</Text>
               </View>
               <View style={{flexDirection:'row', alignItems:'center'}}>
                 {item.isTarget && <Text style={{color:'white',fontWeight:'500'}}>{item.isOnTime ? 'Success':'Failure'}</Text>}
-                <Text style={{color:item.isTarget? 'white':'black',fontWeight:'600', marginLeft:10}}>Source</Text>
+                <Text style={{color:item.isTarget? 'white':textColor,fontWeight:'600', marginLeft:10}}>Source</Text>
               </View>
             </Pressable>
           )
