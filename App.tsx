@@ -131,7 +131,7 @@ function App(): JSX.Element {
               </View>
               <View style={{flexDirection:'row', alignItems:'center'}}>
                 {item.isTarget && <Text style={{color:'white',fontWeight:'500'}}>{item.isOnTime ? 'Success':'Failure'}</Text>}
-                <Text style={{color:item.isTarget? 'white':textColor,fontWeight:'600', marginLeft:10}}>Source</Text>
+                <Text style={{color:item.isTarget? 'white':textColor,fontWeight:'600', marginLeft:10}}>₹ {parseInt(item.salary) *12}</Text>
               </View>
             </Pressable>
           )
