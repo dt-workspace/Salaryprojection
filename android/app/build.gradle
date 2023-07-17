@@ -98,8 +98,8 @@ android {
         applicationId "com.salaryprojection"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "3"
+        versionCode 6
+        versionName "6"
     }
 
     splits {
@@ -136,6 +136,15 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
+                useVersion("1.8.0")
+            }
+        }
+    }
+}
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
