@@ -10,3 +10,20 @@ export function formatSalary(amount: number) {
     return amount;
   }
 }
+export const calculateSavings = (salary: number, expense: number): number => {
+  return salary - expense;
+};
+
+export const calculateSalaryWithHike = (
+  salary: number,
+  hike: number
+): number => {
+  return salary * ((100 + hike) / 100);
+};
+
+export const calculateExpenseWithInflation = (
+  expense: number,
+  inflation: number
+): number => {
+  return expense * ((100 + inflation) / 100);
+};

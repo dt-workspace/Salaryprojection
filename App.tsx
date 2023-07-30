@@ -11,7 +11,7 @@ import {
   Switch,
 } from "react-native";
 
-import { formatSalary } from "./src/utility/salaryFormater";
+import { calculateExpenseWithInflation, calculateSalaryWithHike, calculateSavings, formatSalary } from "./src/utility/salaryFormater";
 import SimpleInput from "./src/components/FormInput/SimpleInput";
 import LineText from "./src/components/LineText";
 import { FlashList } from "@shopify/flash-list";
@@ -52,62 +52,76 @@ function App(): JSX.Element {
 
   const [salary, setSalary] = useState<number>(22000);
   const [hike, setHike] = useState<number>(36);
-  const [targetYear, setTargetYear] = useState<number>(17);
+  const [targetYear, setTargetYear] = useState<number>(20);
   const currentDate = new Date();
-  const [expense, setExpense] = useState<number>(2000);
+  const [expense, setExpense] = useState<number>(5000);
   const [inflation, setInflation] = useState<number>(6);
   const [OutflowEnabled, setOutflowEnabled] = useState<boolean>(false);
 
-  let Salary = useCallback(() => {
-    let list = [] as caseFlow[];
-    let a = (hike + 100) / 100;
-    for (let i = 1; i <= targetYear; i++) {
-      let newSalary = (salary * Math.pow(a, i)).toFixed();
-      list.push({
-        salary: parseInt(newSalary),
+  
+
+  const nextYearsSavings = (
+    salary: number,
+    hike: number,
+    expense: number,
+    inflation: number,
+    years: number
+  ): number[] => {
+    const savingsPerYear: number[] = [];
+    for (let i = 1; i <= years; i++) {
+      const savings = calculateSavings(salary, expense);
+      savingsPerYear.push(savings);
+      salary = calculateSalaryWithHike(salary, hike);
+      expense = calculateExpenseWithInflation(expense, inflation);
+    }
+    return savingsPerYear;
+  };
+
+  interface CaseFlow {
+    salary: number;
+    isTarget: boolean;
+    isOnTime: boolean;
+    year: number;
+    yearly: number;
+  }
+  let nextThresholds = [
+    1000000, 10000000, 100000000, 1000000000, 10000000000,
+  ];
+  let nextThresholdYears = [2040, 2060, 2080, 2100, 2120];
+
+  const Salary = useCallback(() => {
+    let monthly = nextYearsSavings(
+      salary,
+      hike,
+      OutflowEnabled ? expense : 0,
+      OutflowEnabled ? inflation : 0,
+      targetYear
+    );
+    let format = monthly.map((m, i) => {
+      return {
+        salary: Math.round(m),
         isTarget: false,
         isOnTime: false,
         year: currentDate.getFullYear() + i,
-        yearly: parseInt(newSalary) * 12,
-      });
-    }
-
-    let nextThresholds = [
-      1000000, 10000000, 100000000, 1000000000, 10000000000,
-    ];
-    let nextThresholdYears = [2040, 2060, 2080, 2100, 2120];
-
+        yearly: Math.round(m*12),
+      };
+    });
     for (const [index, threshold] of nextThresholds.entries()) {
-      let nextThreshold = list.findIndex((item) => item.salary > threshold);
+      let nextThreshold = format.findIndex((item) => item.salary > threshold);
       if (nextThreshold != -1) {
-        list[nextThreshold] = {
-          ...list[nextThreshold],
+        format[nextThreshold] = {
+          ...format[nextThreshold],
           isTarget: true,
-          isOnTime: list[nextThreshold].year <= nextThresholdYears[index],
+          isOnTime: format[nextThreshold].year <= nextThresholdYears[index],
         };
       }
     }
-
-    let outflow = list.map((out, iout) => {
-      let yearly =
-        out.yearly -
-        (expense * 12 + ((expense * 12 * inflation) / 100) * (iout + 1));
-      let monthly =
-        out.salary - (expense + ((expense * inflation) / 100) * (iout + 1));
-      
-      return {
-        ...out,
-        salary: monthly,
-        yearly: yearly,
-      };
-    });
-
     return {
-      salaries: OutflowEnabled ? outflow : list,
+      salaries: format,
     };
   }, [hike, salary, targetYear, expense, inflation, OutflowEnabled]);
 
-  let { salaries } = Salary();
+  const { salaries } = Salary();
 
   const FooterComponent = useCallback(() => {
     return (
@@ -117,19 +131,18 @@ function App(): JSX.Element {
           textStyle={style.centerText}
           lineStyle={style.centerBorder}
         />
-        <View style={{ alignItems: "center",marginBottom:10 }}>
+        <View style={{ alignItems: "center", marginBottom: 10 }}>
           <Switch
-            trackColor={{ false: 'rgba(243,243,243,.2)', true: "#f4f3f4"}}
-            thumbColor={OutflowEnabled ? 'green' : "#f4f3f4"}
+            trackColor={{ false: "rgba(243,243,243,.2)", true: "#f4f3f4" }}
+            thumbColor={OutflowEnabled ? "green" : "#f4f3f4"}
             onValueChange={() => {
               setOutflowEnabled(!OutflowEnabled);
             }}
             value={OutflowEnabled}
-            
           />
         </View>
 
-        <View style={[style.salaryInputContainer,{elevation:4}]}>
+        <View style={[style.salaryInputContainer, { elevation: 4 }]}>
           <View style={{ alignItems: "center" }}>
             <Text style={style.inputLabel}>Expense</Text>
             <SimpleInput
@@ -137,7 +150,7 @@ function App(): JSX.Element {
               customStyle={style.inputBoxLeft}
               keyboardType="number-pad"
               placeholder="2000"
-              maxLength={10}
+              maxLength={7}
               placeholderTextColor={"gray"}
               onChangeText={(text) =>
                 setExpense(text.length > 0 ? parseInt(text) : 0)
@@ -153,7 +166,7 @@ function App(): JSX.Element {
               keyboardType="number-pad"
               placeholder="7"
               placeholderTextColor={"gray"}
-              maxLength={3}
+              maxLength={2}
               onChangeText={(text) =>
                 setInflation(text.length > 0 ? parseInt(text) : 0)
               }
@@ -175,7 +188,7 @@ function App(): JSX.Element {
         />
 
         <View style={style.salaryInputContainer}>
-          <View style={{ alignItems: "center" }}>
+          {/* <View style={{ alignItems: "center" }}>
             <Text style={style.inputLabel}>Next</Text>
             <SimpleInput
               defaultValue={targetYear.toString()}
@@ -184,21 +197,24 @@ function App(): JSX.Element {
               placeholder="40"
               maxLength={2}
               placeholderTextColor={"gray"}
-              onChangeText={(text) =>
+              onChangeText={(text) =>{
+
                 setTargetYear(text.length > 0 ? parseInt(text) : 0)
+                
+              }
               }
             />
-          </View>
+          </View> */}
           <View style={{ alignItems: "center" }}>
             <Text style={style.inputLabel}>Current</Text>
 
             <SimpleInput
               defaultValue={salary.toString()}
-              customStyle={[style.inputBoxCenter]}
+              customStyle={[style.inputBoxLeft]}
               keyboardType="number-pad"
               placeholder="Enter Salary"
               placeholderTextColor={"gray"}
-              maxLength={10}
+              maxLength={7}
               onChangeText={(text) =>
                 setSalary(text.length > 0 ? parseInt(text) : 0)
               }
@@ -213,66 +229,69 @@ function App(): JSX.Element {
               keyboardType="number-pad"
               placeholder="Enter Hike"
               placeholderTextColor={"gray"}
-              maxLength={3}
+              maxLength={2}
               onChangeText={(text) =>
                 setHike(text.length > 0 ? parseInt(text) : 0)
               }
             />
           </View>
         </View>
-        <View style={{height:30}}></View>
+        <View style={{ height: 30 }}></View>
       </View>
     );
   }, [style]);
 
-  const SalaryItemComponent = useCallback(({ item, index }:{item:caseFlow,index:number}) => {
-    return (
-      <Pressable
-        key={index}
-        style={[
-          style.salaryItem,
-          {
-            shadowColor: style.onBackgroundColor,
-            backgroundColor: item.isTarget
-              ? item.isOnTime
-                ? "green"
-                : "red"
-              : style.primaryColor,
-          },
-        ]}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ color: item.isTarget ? "white" : style.textColor }}>
-            {item.year}
-          </Text>
-          <Text
-            style={{
-              marginLeft: 10,
-              color: item.isTarget ? "white" : style.textColor,
-            }}
-          >
-            ₹ {formatSalary(item.salary)}
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {item.isTarget && (
-            <Text style={{ color: "white", fontWeight: "500" }}>
-              {item.isOnTime ? "Success" : "Failure"}
+  const SalaryItemComponent = useCallback(
+    ({ item, index }: { item: caseFlow; index: number }) => {
+      return (
+        <Pressable
+          key={index}
+          style={[
+            style.salaryItem,
+            {
+              shadowColor: style.onBackgroundColor,
+              backgroundColor: item.isTarget
+                ? item.isOnTime
+                  ? "green"
+                  : "red"
+                : style.primaryColor,
+            },
+          ]}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ color: item.isTarget ? "white" : style.textColor }}>
+              {item.year}
             </Text>
-          )}
-          <Text
-            style={{
-              color: item.isTarget ? "white" : style.textColor,
-              fontWeight: "600",
-              marginLeft: 10,
-            }}
-          >
-            ₹ {formatSalary(item.yearly)}
-          </Text>
-        </View>
-      </Pressable>
-    );
-  }, [style]);
+            <Text
+              style={{
+                marginLeft: 10,
+                color: item.isTarget ? "white" : style.textColor,
+              }}
+            >
+              ₹ {formatSalary(item.salary)}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {item.isTarget && (
+              <Text style={{ color: "white", fontWeight: "500" }}>
+                {item.isOnTime ? "Success" : "Failure"}
+              </Text>
+            )}
+            <Text
+              style={{
+                color: item.isTarget ? "white" : style.textColor,
+                fontWeight: "600",
+                marginLeft: 10,
+              }}
+            >
+              ₹ {formatSalary(item.yearly)}
+            </Text>
+          </View>
+        </Pressable>
+      );
+    },
+    [style]
+  );
 
   return (
     <View style={style.root}>
