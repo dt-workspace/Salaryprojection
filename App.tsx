@@ -11,7 +11,12 @@ import {
   Switch,
 } from "react-native";
 
-import { calculateExpenseWithInflation, calculateSalaryWithHike, calculateSavings, formatSalary } from "./src/utility/salaryFormater";
+import {
+  calculateExpenseWithInflation,
+  calculateSalaryWithHike,
+  calculateSavings,
+  formatSalary,
+} from "./src/utility/salaryFormater";
 import SimpleInput from "./src/components/FormInput/SimpleInput";
 import LineText from "./src/components/LineText";
 import { FlashList } from "@shopify/flash-list";
@@ -32,6 +37,8 @@ type caseFlow = {
   isOnTime: boolean;
   year: number;
   yearly: number;
+  saving: number;
+  isSaving:boolean
 };
 
 function App(): JSX.Element {
@@ -57,8 +64,7 @@ function App(): JSX.Element {
   const [expense, setExpense] = useState<number>(5000);
   const [inflation, setInflation] = useState<number>(6);
   const [OutflowEnabled, setOutflowEnabled] = useState<boolean>(false);
-
-  
+  const [selectedYear,setSelectedYear] = useState<number[]>([])
 
   const nextYearsSavings = (
     salary: number,
@@ -84,9 +90,7 @@ function App(): JSX.Element {
     year: number;
     yearly: number;
   }
-  let nextThresholds = [
-    1000000, 10000000, 100000000, 1000000000, 10000000000,
-  ];
+  let nextThresholds = [1000000, 10000000, 100000000, 1000000000, 10000000000];
   let nextThresholdYears = [2040, 2060, 2080, 2100, 2120];
 
   const Salary = useCallback(() => {
@@ -97,15 +101,20 @@ function App(): JSX.Element {
       OutflowEnabled ? inflation : 0,
       targetYear
     );
+    let totalSaving = 0;
     let format = monthly.map((m, i) => {
+      const yearlyIncome = Math.round(m * 12);
+      totalSaving += yearlyIncome;
       return {
         salary: Math.round(m),
         isTarget: false,
         isOnTime: false,
         year: currentDate.getFullYear() + i,
-        yearly: Math.round(m*12),
+        yearly: yearlyIncome,
+        saving: totalSaving,
       };
     });
+
     for (const [index, threshold] of nextThresholds.entries()) {
       let nextThreshold = format.findIndex((item) => item.salary > threshold);
       if (nextThreshold != -1) {
@@ -119,7 +128,7 @@ function App(): JSX.Element {
     return {
       salaries: format,
     };
-  }, [hike, salary, targetYear, expense, inflation, OutflowEnabled]);
+  }, [hike, salary, targetYear, expense, inflation, OutflowEnabled,selectedYear]);
 
   const { salaries } = Salary();
 
@@ -243,54 +252,74 @@ function App(): JSX.Element {
 
   const SalaryItemComponent = useCallback(
     ({ item, index }: { item: caseFlow; index: number }) => {
+      let isSaving = selectedYear.findIndex((value)=> value == index) != -1
+      
       return (
-        <Pressable
-          key={index}
-          style={[
-            style.salaryItem,
-            {
-              shadowColor: style.onBackgroundColor,
-              backgroundColor: item.isTarget
-                ? item.isOnTime
-                  ? "green"
-                  : "red"
-                : style.primaryColor,
-            },
-          ]}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ color: item.isTarget ? "white" : style.textColor }}>
-              {item.year}
-            </Text>
-            <Text
-              style={{
-                marginLeft: 10,
-                color: item.isTarget ? "white" : style.textColor,
-              }}
-            >
-              ₹ {formatSalary(item.salary)}
-            </Text>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {item.isTarget && (
-              <Text style={{ color: "white", fontWeight: "500" }}>
-                {item.isOnTime ? "Success" : "Failure"}
+        <View>
+          <Pressable
+            key={index}
+            style={[
+              style.salaryItem,
+              {
+                shadowColor: style.onBackgroundColor,
+                backgroundColor: item.isTarget
+                  ? item.isOnTime
+                    ? "green"
+                    : "red"
+                  : style.primaryColor,
+              },
+            ]}
+            onPress={()=>{
+              setSelectedYear([index])
+              
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text
+                style={{ color: item.isTarget ? "white" : style.textColor }}
+              >
+                {item.year}
               </Text>
-            )}
-            <Text
-              style={{
-                color: item.isTarget ? "white" : style.textColor,
-                fontWeight: "600",
-                marginLeft: 10,
-              }}
-            >
-              ₹ {formatSalary(item.yearly)}
-            </Text>
-          </View>
-        </Pressable>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: item.isTarget ? "white" : style.textColor,
+                }}
+              >
+                ₹ {formatSalary(item.salary)}
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {item.isTarget && (
+                <Text style={{ color: "white", fontWeight: "500" }}>
+                  {item.isOnTime ? "Success" : "Failure"}
+                </Text>
+              )}
+              <Text
+                style={{
+                  color: item.isTarget ? "white" : style.textColor,
+                  fontWeight: "600",
+                  marginLeft: 10,
+                }}
+              >
+                ₹ {formatSalary(item.yearly)}
+              </Text>
+            </View>
+          </Pressable>
+          {isSaving && <Text
+            style={{
+              color: 'gray',
+              fontWeight: "600",
+              marginRight: 20,
+              textAlign: "right",
+            }}
+          >
+            Total Saving ₹ {formatSalary(item.saving)}
+          </Text>}
+        </View>
       );
     },
-    [style]
+    [style,selectedYear]
   );
 
   return (
