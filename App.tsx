@@ -38,7 +38,7 @@ type caseFlow = {
   year: number;
   yearly: number;
   saving: number;
-  isSaving:boolean
+  isSaving: boolean
 };
 
 function App(): JSX.Element {
@@ -57,14 +57,14 @@ function App(): JSX.Element {
     return { ...createStyle(theme), ...theme };
   }, [isDarkMode]);
 
-  const [salary, setSalary] = useState<number>(22000);
-  const [hike, setHike] = useState<number>(36);
+  const [salary, setSalary] = useState<number>(35000);
+  const [hike, setHike] = useState<number>(38);
   const [targetYear, setTargetYear] = useState<number>(20);
   const currentDate = new Date();
   const [expense, setExpense] = useState<number>(5000);
-  const [inflation, setInflation] = useState<number>(6);
+  const [inflation, setInflation] = useState<number>(10);
   const [OutflowEnabled, setOutflowEnabled] = useState<boolean>(false);
-  const [selectedYear,setSelectedYear] = useState<number[]>([])
+  const [selectedYear, setSelectedYear] = useState<number[]>([])
 
   const nextYearsSavings = (
     salary: number,
@@ -128,7 +128,7 @@ function App(): JSX.Element {
     return {
       salaries: format,
     };
-  }, [hike, salary, targetYear, expense, inflation, OutflowEnabled,selectedYear]);
+  }, [hike, salary, targetYear, expense, inflation, OutflowEnabled, selectedYear]);
 
   const { salaries } = Salary();
 
@@ -252,8 +252,8 @@ function App(): JSX.Element {
 
   const SalaryItemComponent = useCallback(
     ({ item, index }: { item: caseFlow; index: number }) => {
-      let isSaving = selectedYear.findIndex((value)=> value == index) != -1
-      
+      let isSaving = selectedYear.findIndex((value) => value == index) != -1
+
       return (
         <View>
           <Pressable
@@ -269,9 +269,13 @@ function App(): JSX.Element {
                   : style.primaryColor,
               },
             ]}
-            onPress={()=>{
-              setSelectedYear([index])
-              
+            onPress={() => {
+              if (selectedYear.includes(index)) {
+                setSelectedYear([])
+              } else {
+                setSelectedYear([index])
+              }
+
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -319,7 +323,7 @@ function App(): JSX.Element {
         </View>
       );
     },
-    [style,selectedYear]
+    [style, selectedYear]
   );
 
   return (
