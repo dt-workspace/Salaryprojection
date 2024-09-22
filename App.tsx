@@ -21,6 +21,7 @@ import SimpleInput from "./src/components/FormInput/SimpleInput";
 import LineText from "./src/components/LineText";
 import { FlashList } from "@shopify/flash-list";
 
+
 const { width, height } = Dimensions.get("window");
 
 type themeProps = {
@@ -291,6 +292,14 @@ function App(): JSX.Element {
                 }}
               >
                 ₹ {formatSalary(item.salary)}
+              </Text>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'gray',
+                  fontSize:12
+                }}
+              >- ₹ {formatSalary(Number((item.salary/30).toFixed(2)))}
               </Text>
             </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
