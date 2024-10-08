@@ -77,7 +77,7 @@ export default function LandingContainer() {
 
   function FooterComponent() {
     return (
-      <View>
+      <View style={{borderTopWidth: 1, borderTopColor: 'gray'}}>
         <View style={style.salaryInputContainer}>
           <ActionText value={expense} label="Expense" onChange={setExpense} maxLength={10} />
           <ActionText value={inflation} label="Inflation" onChange={setInflation} maxLength={2} />
@@ -122,12 +122,10 @@ const createStyle = (T: themeProps) =>
     salaryInputContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
-      backgroundColor: T.primaryColor,
+      // backgroundColor: T.,
       borderRadius: 20,
       marginHorizontal: 20,
       paddingTop: 20,
-      elevation: 20,
-      shadowColor: "green",
     },
     inputBoxRight: {
       textAlign: "center",

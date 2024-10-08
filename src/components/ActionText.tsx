@@ -31,7 +31,7 @@ export default function ActionText({
 
       <RNBottomSheet height={300} ref={ref}>
         <View style={{ flex:1,justifyContent:"center",alignItems:"center" }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>{label}</Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold", color: 'black' }}>{label}</Text>
           <SimpleInput
             defaultValue={inputValue}
             customStyle={style.textInput}
@@ -50,6 +50,7 @@ export default function ActionText({
             justifyContent: "center",
             alignItems: "center",
             marginBottom: 30,
+            marginHorizontal: 20,
           }}
           onPress={() => {
             onChange(Number(inputValue));
@@ -85,5 +86,6 @@ const createStyles = (theme: themeProps) =>
       fontWeight: "bold",
       color: theme.textColor,
       backgroundColor: theme.backgroundColor,
+      textAlign: "center",
     },
   });

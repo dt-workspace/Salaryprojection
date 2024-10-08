@@ -14,7 +14,7 @@ export default function SalaryItemComponent({ item, index }: Readonly<SalaryItem
   const styles = createStyles(theme);
 
   return (
-    <View style={{borderTopWidth: 1, borderTopColor: '#2F3645',borderBottomWidth: 1, borderBottomColor: '#2F3645'}}>
+    <View style={{borderTopWidth: 1, borderTopColor: 'gray'}}>
       <Text style={styles.yearText}>{item.year}</Text>
       <Pressable key={index} style={styles.salaryItem}>
           <View>
@@ -44,7 +44,6 @@ const createStyles = (theme: themeProps) =>
       flexDirection: "row",
       alignItems: "center",
       height: 40,
-      elevation: 3,
       marginHorizontal: 15,
       paddingHorizontal: 10,
       borderRadius: 10,

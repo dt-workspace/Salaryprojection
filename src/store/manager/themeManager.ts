@@ -24,8 +24,8 @@ const themeManager = createSlice({
   },
   reducers: {
     toggleDarkMode: (state) => {
-      state.theme = state.isDarkMode ? LightTheme : DarkTheme;
-      state.isDarkMode = !state.isDarkMode;
+      state.theme = DarkTheme;
+      state.isDarkMode = true;
     },
     toggleLightMode: (state) => {
       state.theme = LightTheme;
