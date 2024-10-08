@@ -29,6 +29,7 @@ export default function SimpleInput({
       maxLength={maxLength}
       placeholderTextColor={placeholderTextColor}
       onChangeText={onChangeText}
+      autoFocus={true}
     />
   )
 }
